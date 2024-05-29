@@ -48,10 +48,10 @@ mongoose.connect(dbUrl)
 // Session middleware with MongoDB store
 app.use(session({
   secret: 'yhbvkjsdvbsdvbvdj',
-  resave: false,
+  resave: true,
   saveUninitialized: true,
   store: MongoStore.create({ mongoUrl: dbUrl }),
-  cookie: { secure: false }
+  cookie: { secure: true }
 }));
 
   app.get('/', async (req, res) => {
