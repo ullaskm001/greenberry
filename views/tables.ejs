@@ -1,0 +1,264 @@
+<!-- Including Header -->
+<%- include('./header.ejs') %>
+
+<main class="h-full overflow-y-auto">
+  <div class="container px-6 mx-auto grid">
+    <h2 class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">
+      Dashboard
+    </h2>
+
+    <!-- Table with Data -->
+    <div class="w-full overflow-hidden rounded-lg shadow-xs">
+      <div class="w-full overflow-x-auto">
+        <table id="data-table" class="w-full whitespace-no-wrap">
+          <!-- Table Headings -->
+          <thead>
+            <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+              <th class="px-4 py-3">Name</th>
+              <th class="px-4 py-3">Phone Number</th>
+              <th class="px-4 py-3">Sq Feet</th>
+              <th class="px-4 py-3">Location</th>
+              <th class="px-4 py-3">Plan</th>
+              <th class="px-4 py-3">Start</th>
+              <th class="px-4 py-3">End</th>
+              <th class="px-4 py-3">Actions</th>
+            </tr>
+          </thead>
+          <!-- Table Body -->
+          <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+            <% dataservice.forEach((data, index) => { %>
+              <tr class="text-gray-700 dark:text-gray-400" data-id="<%= data._id %>">
+                <td class="px-4 py-3"><%= data.name %></td>
+                <td hidden class="px-4 py-3"><%= data._id %></td>
+                <td class="px-4 py-3"><%= data.phoneNumber %></td>
+                <td class="px-4 py-3"><%= data.sqfeet %></td>
+                <td class="px-4 py-3"><%= data.placelocation %></td>
+                <td class="px-4 py-3"><%= data.plan %></td>
+                <td class="px-4 py-3"><%= data.startDate.toISOString().split('T')[0] %></td>
+                <td class="px-4 py-3"><%= data.endDate.toISOString().split('T')[0] %></td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center space-x-4 text-sm">
+                    <!-- Edit Button -->
+                    <button class="btn btn-primary" onclick="populateEditModal('<%- encodeURIComponent(JSON.stringify(data)) %>')" data-toggle="modal" data-target="#editModal">
+                      Edit
+                    </button>
+                    <!-- Delete Button -->
+                    <button class="btn btn-danger" onclick="deleteData('<%= data._id %>')">
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">Edit Data</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="editForm">
+            <div class="form-group">
+              <label for="editName">Name</label>
+              <input type="text" class="form-control" id="editName" name="editName">
+            </div>
+            <div hidden class="form-group">
+              <label for="editid">Client ID</label>
+              <input type="text" class="form-control" id="editid" name="editid" readonly>
+            </div>
+            <div class="form-group">
+              <label for="editPhoneNumber">Phone Number</label>
+              <input type="text" class="form-control" id="editPhoneNumber" name="editPhoneNumber">
+            </div>
+            <div class="form-group">
+              <label for="editPhoneNumber">Sq Feet</label>
+              <input type="text" class="form-control" id="editsqfeet" name="editsqfeet">
+            </div>
+            <div class="form-group">
+              <label for="editLocation">Location</label>
+              <input type="text" class="form-control" id="editLocation" name="editLocation">
+            </div>
+            <div class="form-group">
+              <label  id="editPlan" name="editPlan" class="block mt-4 text-sm" for="editPlan">
+                <span class="text-gray-700 dark:text-gray-400">Select Plan</span>
+                <select
+                 name="plan" class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                >
+                  <option value="3m" selected>3 Months</option>
+                  <option value="6m">6 Months</option>
+                  <option value="9m">9 Months</option>
+                  <option value="1y">1 Year</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-group">
+              <label class="block mt-4 text-sm">
+                <span class="text-gray-700 dark:text-gray-400">Start Date</span>
+                <input
+                  type="date"
+                  id="editStartDate"
+                  name="editStartDate"
+                  class="form-control"
+                  placeholder="Select Start Date"
+                  onchange="updateEndDate()"
+                />
+              </label>
+              
+            </div>
+            <div class="form-group">
+              <label for="editEndDate">End Date</label>
+              <input type="date" class="form-control" id="editEndDate" name="editEndDate">
+            </div>
+            <input type="hidden" id="editDataId" name="editDataId">
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="submitEditForm()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Frontend JavaScript for deleting data
+function deleteData(dataId) {
+  if (!confirm('Are you sure you want to delete this item?')) {
+    return; // If user cancels, do nothing
+  }
+
+  fetch(`/delete/${dataId}`, {
+    method: 'DELETE'
+  })
+  .then(response => {
+    if (response.ok) {
+      console.log('Data deleted successfully');
+      // Optionally refresh the page or update the UI after successful deletion
+      window.location.reload(); // Reload the page
+    } else {
+      console.error('Failed to delete data');
+    }
+  })
+  .catch(error => {
+    console.error('Error deleting data:', error);
+  });
+}
+
+</script>
+
+<script>
+  function updateEndDate() {
+    const startDateInput = document.getElementById('editStartDate');
+    const endDateInput = document.getElementById('editEndDate');
+    const planSelect = document.querySelector('select[name="plan"]');
+
+    if (startDateInput.value && planSelect.value) {
+      const startDate = new Date(startDateInput.value);
+      let endDate = new Date(startDate); // Initialize end date as the start date
+
+      const planValue = planSelect.value;
+
+      // Calculate end date based on selected plan
+      if (planValue === '3m') {
+        endDate.setDate(startDate.getDate() + 90); // 90 days for 3 months
+      } else if (planValue === '6m') {
+        endDate.setDate(startDate.getDate() + 180); // 180 days for 6 months
+      } else if (planValue === '9m') {
+        endDate.setDate(startDate.getDate() + 270); // 270 days for 9 months
+      } else if (planValue === '1y') {
+        endDate.setFullYear(startDate.getFullYear() + 1); // 1 year from start date
+      }
+
+      // Format end date as YYYY-MM-DD for input field
+      const formattedEndDate = endDate.toISOString().split('T')[0];
+      endDateInput.value = formattedEndDate;
+    }
+  }
+</script>
+
+
+<!-- Bootstrap JS Library -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+  // Client-side JavaScript code
+  function submitEditForm() {
+  const formData = new FormData(document.getElementById('editForm'));
+
+  // Convert formData to JSON object
+  const newData = {};
+  formData.forEach((value, key) => {
+    newData[key] = value;
+  });
+
+  // Get the _id from the hidden input field
+  const editDataId = document.getElementById('editDataId').value;
+
+  // Add _id to newData object
+  newData.editDataId = editDataId;
+
+  // Send POST request to server
+  fetch('/editsubmit', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(newData)
+  })
+  .then(response => {
+    if (response.ok) {
+      console.log('Edit successful');
+      $('#editModal').modal('hide');
+      // Optionally refresh the page after successful edit
+      window.location.reload(); // Reload the page
+    } else {
+      console.error('Edit failed');
+    }
+  })
+  .catch(error => {
+    console.error('Error editing data:', error);
+  });
+}
+
+
+  function populateEditModal(data) {
+  try {
+    const parsedData = JSON.parse(decodeURIComponent(data));
+    console.log('Parsed Data:', parsedData); // Check parsed data in console
+
+    // Populate form fields with client data
+    document.getElementById('editName').value = parsedData.name;
+    document.getElementById('editPhoneNumber').value = parsedData.phoneNumber;
+    document.getElementById('editsqfeet').value = parsedData.sqfeet;
+    document.getElementById('editLocation').value = parsedData.placelocation;
+    document.getElementById('editPlan').value = parsedData.plan;
+
+    // Set start date (if valid)
+    const startDate = parsedData.startDate ? new Date(parsedData.startDate) : null;
+    document.getElementById('editStartDate').value = startDate ? startDate.toISOString().split('T')[0] : '';
+
+    // Set end date (if valid)
+    const endDate = parsedData.endDate ? new Date(parsedData.endDate) : null;
+    document.getElementById('editEndDate').value = endDate ? endDate.toISOString().split('T')[0] : '';
+
+    // Set client ID in hidden input
+    document.getElementById('editDataId').value = parsedData._id;
+    document.getElementById('editid').value = parsedData._id;
+
+  } catch (error) {
+    console.error('Error populating edit modal:', error);
+  }
+}
+
+</script>

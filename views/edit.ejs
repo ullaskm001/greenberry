@@ -1,0 +1,150 @@
+<%- include ('./header.ejs')  %>
+<form method="post" action="/submit">
+<main class="h-full pb-16 overflow-y-auto">
+          <div class="container px-6 mx-auto grid">
+            <h2
+              class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
+            >
+              Client Data
+            </h2>
+            
+            <!-- General elements -->
+           
+            <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
+              <!-- Custom Name Field -->
+              <label class="block text-sm">
+                <span  class="text-gray-700 dark:text-gray-400" >Name</span>
+                <input
+                 name="name" type="text" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="Customer's Name"
+                />
+              </label>
+            
+              <label class="block mt-4 text-sm">
+                <span class="text-gray-700 dark:text-gray-400">Phone Number</span>
+                <input
+                    name="Phonenumber"
+                    type="number"
+                    pattern="[0-9]*"
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '')" 
+                    class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:-gray-300 dark:focus:shadow-outline-gray form-input"
+                    placeholder="Customer's Phone Number"
+                />
+            </label>
+            
+              <!-- Custom Place Location Field -->
+              <label class="block mt-4 text-sm">
+                <span class="text-gray-700 dark:text-gray-400">Place Location</span>
+                <input
+                  name="place" type="" class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="Customer's Location"
+                />
+              </label>
+
+              <!-- Select Plan Field -->
+              <label class="block mt-4 text-sm">
+                <span class="text-gray-700 dark:text-gray-400">Select Plan</span>
+                <select
+                 name="plan" class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-select focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                >
+                  <option value="3m" selected>3 Months</option>
+                  <option value="6m">6 Months</option>
+                  <option value="9m">9 Months</option>
+                  <option value="1y">1 Year</option>
+                </select>
+              </label>
+            
+              <!-- Date Field -->
+              <label class="block mt-4 text-sm">
+                <span class="text-gray-700 dark:text-gray-400">Start Date</span>
+                <input
+                  type="date"
+                  id="startDate"
+                  name="startDate"
+                  class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="Select Start Date"
+                  onchange="updateEndDate()"
+                />
+              </label>
+
+              <label class="block mt-4 text-sm">
+                <span class="text-gray-700 dark:text-gray-400">End Date (90 days after start date)</span>
+                <input
+                  type="date"
+                  id="endDate"
+                  name="endDate"
+                  class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                  placeholder="Automatically calculated"
+                  readonly
+                />
+              </label>
+            
+              
+            
+              <!-- Comment Field -->
+              <label class="block mt-4 text-sm">
+                <span class="text-gray-700 dark:text-gray-400">Comment</span>
+                <textarea
+                 name="comment" class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-purple-400 focus:outline-none focus:shadow-outline-purple dark:focus:shadow-outline-gray"
+                  rows="3"
+                  placeholder="Enter any additional comments or details."
+                ></textarea>
+              </label>
+            </div>
+            <button type="submit" name="submit">Submit</button>
+   
+          
+          </div>
+        </main>
+      </div>
+    </div>
+</form>   
+<script>
+  function updateEndDate() {
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    const planSelect = document.querySelector('select');
+
+    if (startDateInput.value && planSelect.value) {
+      const startDate = new Date(startDateInput.value);
+      const planDuration = planSelect.value;
+
+      let endDate;
+
+      // Parse the plan duration based on the selected option
+      switch (planDuration) {
+        case '3m':
+          endDate = addMonths(startDate, 3);
+          break;
+        case '6m':
+          endDate = addMonths(startDate, 6);
+          break;
+        case '9m':
+          endDate = addMonths(startDate, 9);
+          break;
+        case '1y':
+          endDate = addMonths(startDate, 12);
+          break;
+        default:
+          // Handle unknown plan duration
+          console.error('Unknown plan duration:', planDuration);
+          return;
+      }
+
+      // Format the endDate to 'YYYY-MM-DD' for input type='date'
+      const formattedEndDate = endDate.toISOString().split('T')[0];
+
+      endDateInput.value = formattedEndDate;
+    }
+  }
+
+  // Helper function to add months to a date
+  function addMonths(date, months) {
+    const newDate = new Date(date);
+    newDate.setMonth(newDate.getMonth() + months);
+    return newDate;
+  }
+</script>
+
+  </body>
+</html>

@@ -1,0 +1,205 @@
+<%- include ('./header.ejs')  %>
+        <main class="h-full overflow-y-auto">
+          <div class="container px-6 mx-auto grid">
+            <h2
+              class="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200"
+            >
+              Dashboard
+            </h2>
+            
+            <!-- Cards -->
+            <style>
+              /* Define keyframes for the pulse animation */
+              @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+                100% { transform: scale(1); }
+              }
+            
+              /* Define keyframes for the fire animation */
+              @keyframes fire {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+                100% { transform: scale(1); }
+              }
+            
+              /* Apply pulse animation to the icon */
+              .animate-pulse {
+                animation: pulse 1s ease-in-out infinite;
+              }
+            
+              /* Apply fire animation to the entire card on hover (red card) */
+              .bg-red-100:hover {
+                animation: fire 0.5s ease-in-out infinite alternate;
+                transition-duration: 0.3s;
+                box-shadow: 0 6px 20px rgba(244, 180, 0, 0.4); /* Yellow shadow */
+              }
+            
+              /* Apply custom animation to the orange card */
+              .bg-orange-100:hover {
+                animation: pulse 1s ease-in-out infinite alternate;
+                transition-duration: 0.3s;
+                box-shadow: 0 6px 20px rgba(255, 165, 0, 0.4); /* Orange shadow */
+              }
+            
+              /* Apply custom animation to the yellow card */
+              .bg-yellow-300:hover {
+                animation: pulse 0.8s ease-in-out infinite alternate;
+                transition-duration: 0.3s;
+                box-shadow: 0 6px 20px rgba(255, 255, 0, 0.4); /* Yellow shadow */
+              }
+            
+              /* Apply custom animation to the aqua card */
+              .bg-aqua:hover {
+                animation: pulse 0.7s ease-in-out infinite alternate;
+                transition-duration: 0.3s;
+                box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4); /* Aqua shadow */
+              }
+            </style>
+            
+            <div class="grid gap-6 mb-8 md:grid-cols-2 xl:grid-cols-4">
+              <!-- Orange Card -->
+              <div class="flex items-center p-4 bg-orange-100 rounded-lg shadow-xs bg-orange-100 hover:bg-orange-200">
+                <div class="p-3 mr-4 bg-orange-500 rounded-full animate-pulse">
+                  <div style="width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; border-radius: 50%; background-color: orange;">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                    <a href="/data">Total clients</a>
+                    
+                </p>
+                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                  <a href="/data"> <%= userCount %> </a>
+                </p>
+                </div>
+              </div>
+              <!-- Red Card -->
+              <a href="/red" class="block hover:no-underline">
+                <div class="flex items-center p-4 bg-red-100 rounded-lg shadow-xs bg-red-100 hover:bg-red-200">
+                  <div class="p-3 mr-4 bg-red-500 rounded-full animate-pulse">
+                    <div style="width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; border-radius: 50%; background-color: red;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" fill="white" class="bi bi-fire" viewBox="0 0 16 16">
+                        <path fill="white" d="M8 16c3.314 0 6-2 6-5.5 0-1.5-.5-4-2.5-6 .25 1.5-1.25 2-1.25 2C11 4 9 .5 6 0c.357 2 .5 4-2 6-1.25 1-2 2.729-2 4.5C2 14 4.686 16 8 16m0-1c-1.657 0-3-1-3-2.75 0-.75.25-2 1.25-3C6.125 10 7 10.5 7 10.5c-.375-1.25.5-3.25 2-3.5-.179 1-.25 2 1 3 .625.5 1 1.364 1 2.25C11 14 9.657 15 8 15"/>
+                      </svg>
+                    </div>
+                  </div>
+                  <div>
+                    <p class="mb-2 text-sm font-medium text-red-600">
+                      Urgent
+                    </p>
+                    <p class="text-lg font-semibold text-gray-800">
+                      <%= clientsByEndDateCount.red %>
+                    </p>
+                  </div>
+                </div>
+              </a>
+            
+              
+            
+              <!-- Yellow Card -->
+              
+              <div class="flex items-center p-4 bg-yellow-300 rounded-lg shadow-md hover:shadow-xl bg-yellow-300 hover:bg-yellow-400">
+                <div class="p-3 mr-4 bg-yellow-500 rounded-full animate-pulse">
+                  <div style="width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border-radius: 50%; background-color: yellow;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" fill="orange" class="bi bi-sun" viewBox="0 0 16 16">
+                      <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6m0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"/>
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <p class="mb-1 text-sm font-medium text-yellow-700 uppercase tracking-wide">
+                    <a href="/yellow"> Yellow </a>
+                  </p>
+                  <p class="text-lg font-semibold text-yellow-900">
+                    <a href="/yellow">  <%= clientsByEndDateCount.yellow %> </a>
+                  </p>
+                </div>
+              </div>
+            
+              <!-- Aqua Card -->
+              <div class="flex items-center p-4 bg-aqua rounded-lg shadow-xs bg-aqua hover:bg-aqua-light">
+                <div class="p-3 mr-4 text-teal-500 bg-teal-100 rounded-full dark:text-teal-100 dark:bg-teal-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" class="bi bi-snow" viewBox="0 0 16 16">
+                    <path d="M8 16a.5.5 0 0 1-.5-.5v-1.293l-.646.647a.5.5 0 0 1-.707-.708L7.5 12.793V8.866l-3.4 1.963-.496 1.85a.5.5 0 1 1-.966-.26l.237-.882-1.12.646a.5.5 0 0 1-.5-.866l1.12-.646-.884-.237a.5.5 0 1 1 .26-.966l1.848.495L7 8 3.6 6.037l-1.85.495a.5.5 0 0 1-.258-.966l.883-.237-1.12-.646a.5.5 0 1 1 .5-.866l1.12.646-.237-.883a.5.5 0 1 1 .966-.258l.495 1.849L7.5 7.134V3.207L6.147 1.854a.5.5 0 1 1 .707-.708l.646.647V.5a.5.5 0 1 1 1 0v1.293l.647-.647a.5.5 0 1 1 .707.708L8.5 3.207v3.927l3.4-1.963.496-1.85a.5.5 0 1 1 .966.26l-.236.882 1.12-.646a.5.5 0 0 1 .5.866l-1.12.646.883.237a.5.5 0 1 1-.26.966l-1.848-.495L9 8l3.4 1.963 1.849-.495a.5.5 0 0 1 .259.966l-.883.237 1.12.646a.5.5 0 0 1-.5.866l-1.12-.646.236.883a.5.5 0 1 1-.966.258l-.495-1.849-3.4-1.963v3.927l1.353 1.353a.5.5 0 0 1-.707.708l-.647-.647V15.5a.5.5 0 0 1-.5.5z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                    <a href="/green"> Green</a>
+                  </p>
+                  <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                    <a href="/green"> <%= clientsByEndDateCount.green %></a>
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- New Table -->
+            <div class="w-full overflow-hidden rounded-lg shadow-xs">
+              <div class="w-full overflow-x-auto">
+                <table id="data-table" class="w-full whitespace-no-wrap">
+                  <thead>
+                    <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800">
+                      <th class="px-4 py-3">Name</th>
+                      <th class="px-4 py-3">Phone Number</th>
+                      <th class="px-4 py-3">Sq Feet</th>
+                      <th class="px-4 py-3">Location</th>
+                      <th class="px-4 py-3">Plan</th>
+                      <th class="px-4 py-3">Start</th>
+                      <th class="px-4 py-3">End</th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                    <% Users.forEach(data => { %>
+                      <tr class="text-gray-700 dark:text-gray-400">
+                        <td class="px-4 py-3"><%= data.name %></td>
+                        <td class="px-4 py-3"><%= data.phoneNumber %></td>
+                        <td class="px-4 py-3"><%= data.sqfeet %></td>
+                        <td class="px-4 py-3"><%= data.placelocation %></td>
+                        <td class="px-4 py-3"><%= data.plan %></td>
+                        <td class="px-4 py-3"><%= data.startDate.toISOString().split('T')[0] %></td>
+                        <td class="px-4 py-3"><%= data.endDate.toISOString().split('T')[0] %></td>
+                      </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+          </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+  <script>
+  const deleteData = (id) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `/userdata/${id}`, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    
+    xhr.onload = function () {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const response = JSON.parse(xhr.responseText);
+        console.log('Response:', response);
+        window.location.reload()
+      } else {
+        console.error('Error deleting data:', xhr.statusText);
+      }
+    };
+
+    xhr.onerror = function () {
+      console.error('Request failed');
+    };
+
+    xhr.send();
+  };
+  </script>
+  
+</html>

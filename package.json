@@ -1,0 +1,69 @@
+{
+  "name": "greenberry",
+  "version": "1.0.2",
+  "description": "A multi theme, completely accessible, with components and pages examples, ready for production dashboard.",
+  "scripts": {
+    "start": "node index.js",
+    "tailwind": "tailwindcss build public/assets/css/tailwind.css -o public/assets/css/tailwind.output.css",
+    "build": "env NODE_ENV=production postcss public/assets/css/tailwind.css -o public/assets/css/tailwind.output.css",
+    "cz": "git-cz",
+    "release": "release-it"
+  },
+  "author": "Estevan Maito ",
+  "license": "MIT",
+  "devDependencies": {
+    "@release-it/conventional-changelog": "1.1.4",
+    "@tailwindcss/custom-forms": "0.2.1",
+    "autoprefixer": "9.8.0",
+    "color": "3.1.2",
+    "commitizen": "4.1.2",
+    "cssnano": "4.1.10",
+    "cz-conventional-changelog": "3.2.0",
+    "postcss-cli": "7.1.1",
+    "release-it": "13.6.4",
+    "tailwindcss": "1.4.6",
+    "tailwindcss-multi-theme": "1.0.3"
+  },
+  "keywords": [
+    "tailwind",
+    "windmill",
+    "dashboard",
+    "template",
+    "admin"
+  ],
+  "release-it": {
+    "github": {
+      "release": true
+    },
+    "npm": {
+      "publish": false
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "angular",
+        "infile": "CHANGELOG.md"
+      }
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "main": "index.js",
+  "dependencies": {
+    "connect-mongo": "^5.1.0",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "mongoose": "^8.3.2",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.13",
+    "nodemon": "^3.1.0",
+    "path": "^0.12.7",
+    "puppeteer": "^22.8.1",
+    "twilio": "^5.0.4",
+    "vercel": "^34.1.2"
+  }
+}
