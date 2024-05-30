@@ -15,6 +15,8 @@ const twilio = require('twilio');
 require('dotenv').config();
 const MongoStore = require('connect-mongo');
 
+const isProduction = true; 
+
 // Twilio credentials from environment variables
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -46,12 +48,16 @@ mongoose.connect(dbUrl)
   });
 
 // Session middleware with MongoDB store
+
 app.use(session({
-  secret: 'yhbvkjsdvbsdvbvdj',
-  resave: true,
+  secret: 'yhbvkjsdvbsdvbvdj', 
+  resave: false,
   saveUninitialized: true,
   store: MongoStore.create({ mongoUrl: dbUrl }),
-  cookie: { secure: true }
+  cookie: {
+    secure: isProduction, 
+    maxAge: 24 * 60 * 60 * 1000 
+  }
 }));
 
   app.get('/', async (req, res) => {
