@@ -1,4 +1,3 @@
-// Import required modules
 const express = require('express');
 const session = require('express-session'); 
 const bodyParser = require('body-parser');
@@ -27,8 +26,6 @@ const port = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-
-
 // Middleware setup
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -48,20 +45,32 @@ mongoose.connect(dbUrl)
   });
 
 // Session middleware with MongoDB store
-
 app.use(session({
   secret: 'yhbvkjsdvbsdvbvdj', 
   resave: false,
   saveUninitialized: true,
   store: MongoStore.create({ mongoUrl: dbUrl }),
   cookie: {
-    secure: isProduction, 
-    maxAge: 24 * 60 * 60 * 1000 
+    secure: isProduction, // Use true for production to ensure cookies are only sent over HTTPS
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
 }));
 
-  app.get('/', async (req, res) => {
-    if (req.session.adminid) {
+// Add a simple logger middleware
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+// Add error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
+// Routes
+app.get('/', async (req, res) => {
+  if (req.session.adminid) {
     try {
      
         const UsersData = await serviceModel.find({}).limit(10);
@@ -92,7 +101,7 @@ app.use(session({
         // Adjust yellow count to exclude red clients
         clientsByEndDateCount.yellow -= clientsByEndDateCount.red;
         res.render('index', {
-          Users: UsersData, // Assuming UsersData is defined earlier in your route handler
+          Users: UsersData, 
           userCount: userCount, // Assuming userCount is defined earlier in your route handler
           clientsByEndDateCount: {
               red: clientsByEndDateCount.red < 1 ? 0 : clientsByEndDateCount.red,
@@ -100,7 +109,7 @@ app.use(session({
               green: clientsByEndDateCount.green < 1 ? 0 : clientsByEndDateCount.green
           }
       }); 
-        // console.log(clientsByEndDateCount, "hello");
+       
       
     } catch (error) {
       console.error('Error rendering index:', error);
