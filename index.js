@@ -13,6 +13,7 @@ const puppeteer = require('puppeteer');
 const twilio = require('twilio');
 require('dotenv').config();
 const MongoStore = require('connect-mongo');
+const jwt = require('jsonwebtoken');
 
 const isProduction = true; 
 
@@ -44,34 +45,34 @@ mongoose.connect(dbUrl)
     console.error('Error connecting to database:', error);
   });
 
-// Session middleware with MongoDB store
-app.use(session({
-  secret: 'yhbvkjsdvbsdvbvdj', 
-  resave: false,
-  saveUninitialized: true,
-  store: MongoStore.create({ mongoUrl: dbUrl }),
-  cookie: {
-    secure: isProduction, // Use true for production to ensure cookies are only sent over HTTPS
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+
+  app.use(session({
+    secret: 'mysitesessionsecret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, maxAge: 86400000 }
+}))
+
+
+const checkAuth = async (req, res, next) => {
+  if (req.session.adminid) {
+      await jwt.verify(req.session.adminid, 'secret-key', (err, decoded) => {
+          if (err) {
+              req.session = null;
+              return res.redirect('/login');
+          }
+          req.user = decoded;
+          next();
+      });
+  } else {
+      res.redirect('/login');
   }
-}));
-
-// Add a simple logger middleware
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-});
-
-// Add error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
+};
 
 // Routes
-app.get('/', async (req, res) => {
-  if (req.session.adminid) {
-    try {
+app.get('/', checkAuth, async (req, res) => {
+  
+  try {
      
         const UsersData = await serviceModel.find({}).limit(10);
         const userCount = await serviceModel.countDocuments({});
@@ -110,14 +111,12 @@ app.get('/', async (req, res) => {
           }
       }); 
        
+    
       
     } catch (error) {
       console.error('Error rendering index:', error);
       res.status(500).send('Internal Server Error');
     }
-  } else {
-    res.redirect('/login');
-  }
   });
   
 
@@ -163,7 +162,9 @@ async function verifyLogin(req, res) {
       const password = req.body.password;
 
       if (name === name1 && password === password1) {
-          req.session.adminid = name;
+        const token = jwt.sign({ name }, 'secret-key', { expiresIn: '7d' });
+        req.session.adminid = token;
+          
           res.redirect('/');
       } else {
           res.render('login', { message: "Username or password is incorrect" });
