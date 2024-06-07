@@ -69,11 +69,12 @@ const checkAuth = async (req, res, next) => {
   }
 };
 
+
 // Routes
-app.get('/', checkAuth, async (req, res) => {
+app.get('/',checkAuth,  async (req, res) => {
   
   try {
-     
+
         const UsersData = await serviceModel.find({}).limit(10);
         const userCount = await serviceModel.countDocuments({});
   
@@ -326,10 +327,10 @@ async function sendWhatsAppMessage() {
       const messageBody = formatData(data);
       client.messages
           .create({
-              body: messageBody,
-              from: 'whatsapp:+14155238886',
-              to: 'whatsapp:+918075840361'
-          })
+            body: messageBody,
+            from: 'whatsapp:+14155238886',
+            to: 'whatsapp:+918075840361'
+        })
           .then(message => console.log(`Message sent: ${message.sid}`))
           .catch(error => console.error(`Error sending message: ${error.message}`));
   } else {
