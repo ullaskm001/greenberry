@@ -329,7 +329,7 @@ async function sendWhatsAppMessage() {
           .create({
             body: messageBody,
             from: 'whatsapp:+14155238886',
-            to: 'whatsapp:+918075840361'
+            to: 'whatsapp:+918590750959'
         })
           .then(message => console.log(`Message sent: ${message.sid}`))
           .catch(error => console.error(`Error sending message: ${error.message}`));
@@ -339,12 +339,12 @@ async function sendWhatsAppMessage() {
 }
 
 // Schedule the task to run every day at 3:00 PM
-cron.schedule('00 7 * * *', () => {
-  console.log('Running cron job at 7:00 AM');
+cron.schedule('50 15 * * *', () => {
+  console.log('Running cron job at 3:50 PM');
   sendWhatsAppMessage();
 });
 
-console.log('Cron job scheduled to send WhatsApp message every day at 7:00 AM');
+console.log('Cron job scheduled to send WhatsApp message every day at 3:50 PM');
 
 
 
