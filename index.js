@@ -339,7 +339,7 @@ async function sendWhatsAppMessage() {
 }
 
 // Schedule the task to run every day at 3:00 PM
-cron.schedule('10 12 * * *', () => {
+cron.schedule('44 12 * * *', () => {
   console.log('Running cron job at 12:10 PM');
   sendWhatsAppMessage();
 });
