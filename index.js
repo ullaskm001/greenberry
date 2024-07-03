@@ -10,17 +10,12 @@ const serviceController = require('./controller/serviceController');
 const serviceModel = require('./model/serviceModel');
 const ObjectId = mongoose.Types.ObjectId;
 const puppeteer = require('puppeteer');
-const twilio = require('twilio');
 require('dotenv').config();
 const MongoStore = require('connect-mongo');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
 
 const isProduction = true; 
-
-// Twilio credentials from environment variables
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = new twilio(accountSid, authToken);
 // const cors = require('cors');
 
 const port = 3000;
@@ -294,7 +289,6 @@ app.post('/sendEmail', async (req, res) => {
 
 
 
-
 // Function to fetch data from the MongoDB database
 async function fetchData() {
   try {
@@ -310,7 +304,7 @@ async function fetchData() {
       return null;
   }
 }
-/////////////////////////////////////////////////////
+
 // Function to format the data for the message body
 function formatData(data) {
   if (!data || !Array.isArray(data)) return 'No data available';
@@ -322,30 +316,40 @@ function formatData(data) {
 
 // Function to send WhatsApp message
 async function sendWhatsAppMessage() {
-  const data = await fetchData();
-  if (data) {
-      const messageBody = formatData(data);
-      client.messages
-          .create({
-            body: messageBody,
-            from: 'whatsapp:+14155238886',
-            to: 'whatsapp:+918590750959'
-        })
-          .then(message => console.log(`Message sent: ${message.sid}`))
-          .catch(error => console.error(`Error sending message: ${error.message}`));
-  } else {
-      console.error('No data to send');
+  try {
+    const data = await fetchData();
+    if (data) {
+      const messageBody = formatData(data); // Pass the actual data here
+      
+      const url = 'https://graph.facebook.com/v19.0/374854242373692/messages';
+      const headers = {
+          'Authorization': 'Bearer EAAbTzSfoZCw0BO3CUTT2ZAPXPzvEJ6qZA30G9FiKTygrZCs1HWC68YfQrWUMJ5kG0lKQ6CFTuzJuS8hSZAZAFK95maYTpv2C43RJfCy56vZAjNf7cLIvM5G9rJAhBXVygrEvjRF1ZAan8ZAQs9t8LfWBHmXIgiRLJZC36p3jiCGO7IMTNbjH2ZCSsiZAoQMUBkwDqQg3dVD9cZAOycSh90VV3sS4ZD',
+          'Content-Type': 'application/json'
+      };
+      const payload = {
+          'messaging_product': 'whatsapp',
+          'recipient_type': 'individual',
+          'to': '919886763733',
+          'type': 'text',
+          'text': {
+              'preview_url': false,
+              'body': messageBody
+          }
+      };
+      
+      const response = await axios.post(url, payload, { headers: headers });
+      console.log(`Message sent: ${response.data}`);
+    } else {
+      throw new Error('No data to send');
+    }
+  } catch (error) {
+    console.error(`Error: ${error.message}`);
   }
 }
 
-// Schedule the task to run every day at 3:00 PM
-cron.schedule('44 12 * * *', () => {
-  console.log('Running cron job at 12:10 PM');
+setInterval(() => {
   sendWhatsAppMessage();
-});
-
-console.log('Cron job scheduled to send WhatsApp message every day at 12:10 PM');
-
+}, 1200000);  // 20 minutes in milliseconds
 
 
 // Start the server
