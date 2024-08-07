@@ -347,10 +347,31 @@ async function sendWhatsAppMessage() {
   }
 }
 
-setInterval(() => {
-  sendWhatsAppMessage();
-}, 1200000);  // 20 minutes in milliseconds
+// setInterval(() => {
+//   sendWhatsAppMessage();
+// }, 1200000);  // 20 minutes in milliseconds
 
+function scheduleWhatsAppMessage(hours, minutes) {
+  const now = new Date();
+  const target = new Date();
+
+  target.setHours(hours, minutes, 0, 0);
+
+  if (target <= now) {
+    target.setDate(now.getDate() + 1); // Schedule for the next day
+  }
+
+  const delay = target.getTime() - now.getTime();
+
+  setTimeout(() => {
+    sendWhatsAppMessage();
+    // Reschedule for the next day
+    scheduleWhatsAppMessage(hours, minutes);
+  }, delay);
+}
+
+// Schedule the message to be sent at a specific time
+scheduleWhatsAppMessage(15, 30); // Set the desired hours and minutes
 
 // Start the server
 app.listen(port, () => {
