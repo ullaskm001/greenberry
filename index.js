@@ -371,7 +371,7 @@ function scheduleWhatsAppMessage(hours, minutes) {
 }
 
 // Schedule the message to be sent at a specific time
-scheduleWhatsAppMessage(9, 55); // Set the desired hours and minutes
+scheduleWhatsAppMessage(10, 1); // Set the desired hours and minutes
 
 // Start the server
 app.listen(port, () => {
